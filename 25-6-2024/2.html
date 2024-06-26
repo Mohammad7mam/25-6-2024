@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تطبيق Pokédex</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f4f4f4;
+        margin: 0;
+      }
+
+      .container {
+        text-align: center;
+        max-width: 600px;
+        margin: auto;
+      }
+
+      #pokemon-input {
+        width: 80%;
+        padding: 10px;
+        margin: 10px 0;
+      }
+
+      #search-button {
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      #pokemon-container {
+        margin-top: 20px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        background-color: white;
+        border-radius: 10px;
+        display: none;
+      }
+
+      #pokemon-container img {
+        width: 150px;
+        height: 150px;
+      }
+
+      .pokemon-details {
+        text-align: left;
+      }
+
+      .pokemon-details h3 {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>تطبيق Pokédex</h1>
+      <input
+        type="text"
+        id="pokemon-input"
+        placeholder="أدخل اسم أو رقم البوكيمون"
+      />
+      <button id="search-button">بحث</button>
+      <div id="pokemon-container"></div>
+    </div>
+    <script>
+      document
+        .getElementById("search-button")
+        .addEventListener("click", function () {
+          const query = document
+            .getElementById("pokemon-input")
+            .value.trim()
+            .toLowerCase();
+          if (query) {
+            fetch(`https://pokeapi.co/api/v2/pokemon/${query}`)
+              .then((response) => {
+                if (!response.ok) throw new Error("البوكيمون غير موجود");
+                return response.json();
+              })
+              .then((pokemon) => {
+                document.getElementById("pokemon-container").innerHTML = `
+                            <img src="${pokemon.sprites.front_default}" alt="${
+                  pokemon.name
+                }">
+                            <div class="pokemon-details">
+                                <h3>الاسم: ${pokemon.name}</h3>
+                                <p>رقم: ${pokemon.id}</p>
+                                <p>الوزن: ${pokemon.weight}</p>
+                                <p>الطول: ${pokemon.height}</p>
+                                <p>نوع: ${pokemon.types
+                                  .map((typeInfo) => typeInfo.type.name)
+                                  .join(", ")}</p>
+                            </div>
+                        `;
+                document.getElementById("pokemon-container").style.display =
+                  "block";
+              })
+              .catch((error) => {
+                alert("البوكيمون غير موجود");
+                console.error("Error:", error);
+              });
+          }
+        });
+    </script>
+  </body>
+</html>
